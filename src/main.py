@@ -25,12 +25,15 @@ def print_hidden_layer(hidden_layer):
         print("Bias: " + str(hidden_layer[i]["bias"]))
         print("")
 
-def main():
-    fileModel = input("Masukan file model : ")
-    fileInput = input("Masukan file input : ")
+def calcNet(inputMatrix, hiddenMatrix):
+    return np.matmul(inputMatrix, hiddenMatrix.transpose())
 
-    modelData = readFile(fileModel)
-    inputData = readFile(fileInput)
+def main():
+    # fileModel = input("Masukan file model : ")
+    # fileInput = input("Masukan file input : ")
+
+    modelData = readFile("soalslide.json")
+    inputData = readFile("input.json")
 
     hiddenLayers = modelData["hidden_layer"]
     outputLayer = modelData["output_layer"]
@@ -54,7 +57,12 @@ def main():
     inputMatrix = np.matrix(inputData["input"])
     hiddenLayerMatrix = np.matrix(hiddenLayers[0]["weight"])
     outputLayerMatrix = np.matrix(outputLayer["weight"])
+    print(inputMatrix)
+    print(inputMatrix.shape)
+    print(hiddenLayerMatrix)
+    print(hiddenLayerMatrix.shape)
 
+    print(calcNet(inputMatrix, hiddenLayerMatrix))
     # PSEUDOCODE, DON'T TOUCH
     # 1 orang urusin looping forwardnya di main (TODO: Urusin looping forward di main, Faris)
     # For each hidden layer : (TODO: Ngitung perkalian matriks pertama kali, Jafar)
