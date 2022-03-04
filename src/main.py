@@ -48,11 +48,11 @@ def callActivation(category, value):
 
 
 def main():
-    # fileModel = input("Masukan file model : ")
-    # fileInput = input("Masukan file input : ")
+    fileModel = input("Masukan file model : ")
+    fileInput = input("Masukan file input : ")
 
-    modelData = readFile("model.json")
-    inputData = readFile("input.json")
+    modelData = readFile(fileModel)
+    inputData = readFile(fileInput)
 
     hiddenLayers = modelData["hidden_layer"]
     outputLayer = modelData["output_layer"]
@@ -77,63 +77,39 @@ def main():
     hiddenLayerMatrix = np.matrix(hiddenLayers[0]["weight"])
     outputLayerMatrix = np.matrix(outputLayer["weight"])
 
-    # Calculate net for one layer and add bias 1
-    # print(inputMatrix)
-    # print(hiddenLayerMatrix)
-    # print(outputLayerMatrix)
-
     for i in range(len(hiddenLayers)):
-        hiddenLayerMatrix = np.matrix(hiddenLayers[i]["weight"])
+        hiddenLayerMatrix = np.matrix(
+            hiddenLayers[i]["weight"]).astype(float)
 
         # Start of looping each layer
-        hxy = calcNet(inputMatrix, hiddenLayerMatrix).astype(np.float64)
+        hxy = calcNet(inputMatrix, hiddenLayerMatrix)
 
         # calculate h using activation func
-        for j in range(len(hxy)):
-            for k in range(len(hxy[j])):
-                a = hxy.item(j, k)
-                hxy[j][k] = callActivation(
+        for row in range(len(hxy)):
+            for col in range(len(hxy[row])):
+                a = hxy.item(row, col)
+                hxy[row][col] = callActivation(
                     hiddenLayers[i]["activation_function"], a)
 
         # add bias 1
-        # Not hxy, but insert h
-        hxy = np.insert(hxy, 0, [1 for j in range(len(hxy))], axis=1)
-        print("!!! ", i, " !!!")
-        print(hxy)
-
+        hxy = np.insert(hxy, 0, [1 for _ in range(len(hxy))], axis=1)
         # Forward h value
         # End of loop
         inputMatrix = hxy
 
-    # Calculate to next layer
-    netY = calcNet(hxy, outputLayerMatrix).round(6)
-
-    print("This is netY")
-    print(netY)
-    print("This is outputLayerMatrix")
-    print(outputLayerMatrix)
-
+    # Calculate to output Layer
+    netY = calcNet(hxy, outputLayerMatrix)
     # Compute output using activation function
-    # Its a matrix, so we need to loop it
     for i in range(len(netY)):
-        print(netY[i])
         netY[i] = callActivation(outputLayerActivation, netY[i])
-
     print("Output after activation function")
+    # round all netY values to 5 decimal
+    netY = np.round(netY, 5)
     print(netY)
-
-    # PSEUDOCODE, DON'T TOUCH
-    # 1 orang urusin looping forwardnya di main (TODO: Urusin looping forward di main, Faris)
-    # For each hidden layer : (TODO: Ngitung perkalian matriks pertama kali, Jafar)
-    # Process each bias and weight using matrix mult --> 1 function
-    # Compute h --> 1 function using activation function (TODO: Ngitung h pake activation function, Alwan)
-    # return its result matrix untuk diproses di layer selanjutnya) (dont forget to add bias 1 ) (TODO: idem line sebelumnya)
-
-    # Compute in output layer (TODO: Ngitung output layer buat perhitungan final, Alip)
-    # Kalau di latihan uts itu bagian net_o (TODO: idem line sebelumnya)
-
-    # print(hiddenLayers)
-    # print(outputLayer)
+    # Print output to JSON file
+    outputData = {"output": netY.tolist()}
+    with open('output.json', 'w') as outfile:
+        json.dump(outputData, outfile)
 
 
 if __name__ == "__main__":
