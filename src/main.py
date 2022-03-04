@@ -35,6 +35,7 @@ def print_hidden_layer(hidden_layer):
 def calcNet(inputMatrix, hiddenMatrix):
     return np.matmul(inputMatrix, hiddenMatrix.transpose())
 
+
 def callActivation(category, value):
     if category == "sigmoid":
         return sigmoid(value)
@@ -56,7 +57,6 @@ def main():
     hiddenLayers = modelData["hidden_layer"]
     outputLayer = modelData["output_layer"]
 
-    hiddenLayersActivation = []
     outputLayerActivation = outputLayer["activation_function"]
 
     # X input as matrix
@@ -72,11 +72,6 @@ def main():
     # adding bias to every neuron h
     for i in range(len(outputLayer["bias"])):
         outputLayer["weight"][i].insert(0, outputLayer["bias"][i])
-    
-    # Get hidden layers activation dunction
-    for item in hiddenLayers:
-        # Append activation function
-        hiddenLayersActivation.append(item["activation_function"])
 
     inputMatrix = np.matrix(inputData["input"])
     hiddenLayerMatrix = np.matrix(hiddenLayers[0]["weight"])
@@ -91,46 +86,42 @@ def main():
         hiddenLayerMatrix = np.matrix(hiddenLayers[i]["weight"])
 
         # Start of looping each layer
-        hxy = calcNet(inputMatrix, hiddenLayerMatrix).astype(np.float)
+        hxy = calcNet(inputMatrix, hiddenLayerMatrix).astype(np.float64)
 
         # calculate h using activation func
         for j in range(len(hxy)):
             for k in range(len(hxy[j])):
                 a = hxy.item(j, k)
-                hxy[j][k] = callActivation(hiddenLayersActivation[i], a)
-        
+                hxy[j][k] = callActivation(
+                    hiddenLayers[i]["activation_function"], a)
+
         # add bias 1
-        hxy = np.insert(hxy, 0, [1 for j in range(len(hxy))], axis=1) # Not hxy, but insert h
-        print("!!! ",i," !!!")
+        # Not hxy, but insert h
+        hxy = np.insert(hxy, 0, [1 for j in range(len(hxy))], axis=1)
+        print("!!! ", i, " !!!")
         print(hxy)
 
-        # Forward h value 
+        # Forward h value
         # End of loop
         inputMatrix = hxy
-    
+
     # Calculate to next layer
-    netY = calcNet(hxy[i], outputLayerMatrix)
-    
+    netY = calcNet(hxy, outputLayerMatrix).round(6)
+
     print("This is netY")
     print(netY)
     print("This is outputLayerMatrix")
     print(outputLayerMatrix)
 
-    # Compute output layer
-    netO = np.matmul(netY, outputLayerMatrix)
-
-    # Print output layer
-    print(netO)
-    
     # Compute output using activation function
     # Its a matrix, so we need to loop it
-    for i in range(len(netO)):
-        print(netO[i])
-        netO[i] = callActivation(outputLayerActivation, netO[i])
+    for i in range(len(netY)):
+        print(netY[i])
+        netY[i] = callActivation(outputLayerActivation, netY[i])
 
     print("Output after activation function")
-    print(netO)
-    
+    print(netY)
+
     # PSEUDOCODE, DON'T TOUCH
     # 1 orang urusin looping forwardnya di main (TODO: Urusin looping forward di main, Faris)
     # For each hidden layer : (TODO: Ngitung perkalian matriks pertama kali, Jafar)
@@ -141,8 +132,8 @@ def main():
     # Compute in output layer (TODO: Ngitung output layer buat perhitungan final, Alip)
     # Kalau di latihan uts itu bagian net_o (TODO: idem line sebelumnya)
 
-    #print(hiddenLayers)
-    #print(outputLayer)
+    # print(hiddenLayers)
+    # print(outputLayer)
 
 
 if __name__ == "__main__":
