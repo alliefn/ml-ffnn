@@ -66,17 +66,25 @@ def main():
 
 
     # Calculate net for one layer and add bias 1
-    hxy = calcNet(inputMatrix, hiddenLayerMatrix)
-    
-    # calculate h using activation func
-    """Code here """
-    # add bias 1
-    # hxy = np.insert(hxy, 0, [1 for i in range(len(hxy))], axis=1)
+    print(inputMatrix)
+    print(hiddenLayerMatrix)
+    print(outputLayerMatrix)
 
-    # Calculate to next layer
-    for i in range(len(hxy)):
-        netY = calcNet(hxy[i], outputLayerMatrix)
+    # Start of looping each layer
+    hxy = calcNet(inputMatrix, hiddenLayerMatrix)
+    # calculate h using activation func
+    """ Code calc h here """
+    # add bias 1
+    hxy = np.insert(hxy, 0, [1 for i in range(len(hxy))], axis=1) # Not hxy, but insert h
+
+    # Forward h value 
+
+    # End of loop
     
+    # Calculate to next layer
+    netY = calcNet(hxy[i], outputLayerMatrix)
+    
+
     print(netY)
     # PSEUDOCODE, DON'T TOUCH
     # 1 orang urusin looping forwardnya di main (TODO: Urusin looping forward di main, Faris)
