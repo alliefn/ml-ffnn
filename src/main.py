@@ -85,33 +85,32 @@ def main():
         hxy = calcNet(inputMatrix, hiddenLayerMatrix)
 
         # calculate h using activation func
-        print(hxy)
         m, n = hxy.shape
         for row in range(m):
             for col in range(n):
                 a = hxy.item(row, col)
-                print(row," ",col)
-                # print(hxy.item(row, col)," <--- sebelum")
                 hxy.itemset((row,col),callActivation(
                     hiddenLayers[i]["activation_function"], a))
-                # print(hxy.item(row, col)," <--- sesudah")
 
-        # print(hxy)
         # add bias 1
         hxy = np.insert(hxy, 0, [1 for _ in range(len(hxy))], axis=1)
+        
         # Forward h value
         # End of loop
         inputMatrix = hxy
 
     # Calculate to output Layer
     netY = calcNet(hxy, outputLayerMatrix)
+
     # Compute output using activation function
     for i in range(len(netY)):
         netY[i] = callActivation(outputLayerActivation, netY[i])
     print("Output after activation function")
+
     # round all netY values to 5 decimal
     netY = np.round(netY, 5)
     print(netY)
+
     # Print output to JSON file
     outputData = {"output": netY.tolist()}
     with open('output.json', 'w') as outfile:
