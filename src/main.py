@@ -85,12 +85,18 @@ def main():
         hxy = calcNet(inputMatrix, hiddenLayerMatrix)
 
         # calculate h using activation func
-        for row in range(len(hxy)):
-            for col in range(len(hxy[row])):
+        print(hxy)
+        m, n = hxy.shape
+        for row in range(m):
+            for col in range(n):
                 a = hxy.item(row, col)
-                hxy[row][col] = callActivation(
-                    hiddenLayers[i]["activation_function"], a)
+                print(row," ",col)
+                # print(hxy.item(row, col)," <--- sebelum")
+                hxy.itemset((row,col),callActivation(
+                    hiddenLayers[i]["activation_function"], a))
+                # print(hxy.item(row, col)," <--- sesudah")
 
+        # print(hxy)
         # add bias 1
         hxy = np.insert(hxy, 0, [1 for _ in range(len(hxy))], axis=1)
         # Forward h value
